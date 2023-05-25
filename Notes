@@ -1,0 +1,26 @@
+rails generate model movie title:string overview:text poster_url:text rating:float
+rails generate model list name:string
+rails generate model bookmark comment:text movie:references list:references
+
+
+---
+
+
+class List < ApplicationRecord
+  validates :name, presence: true, uniqueness: true
+  has_many :bookmarks
+  has_many :movies, through: :bookmarks, dependent: :destroy
+end
+*****************************************************************************************
+class Movie < ApplicationRecord
+  validates :title, presence: true, uniqueness: true
+  validates :overview, presence: true, uniqueness: true
+  has_many :bookmarks
+end
+*****************************************************************************************
+class Bookmark < ApplicationRecord
+  belongs_to :movie
+  belongs_to :list
+  validates :comment, length: { minimum: 6 }
+  validates :list, uniqueness: { scope: :movie }
+end
